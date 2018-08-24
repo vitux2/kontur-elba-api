@@ -18,6 +18,16 @@ class Client
 
     protected $_organizationId;
 
+    protected $_login;
+
+    protected $_password;
+
+    public function __construct($login, $password)
+    {
+        $this->_login = $login;
+        $this->_password = $password;
+    }
+
     protected function getInstance()
     {
         if ($this->_instance === null) {
@@ -50,8 +60,8 @@ class Client
 
         $response = $this->getInstance()->request('POST', 'AccessControl/Login/GoInside', [
             'body' => json_encode([
-                'Login' => 'dimmduh@yandex.ru',
-                'Password' => 'hf46IUYFGDuyeg47sGGe',
+                'Login' => $this->_login,
+                'Password' => $this->_password,
                 'RememberMe' => true,
             ]),
             'headers' => [

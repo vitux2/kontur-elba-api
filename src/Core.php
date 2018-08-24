@@ -40,7 +40,7 @@ class Core
     protected function getClient()
     {
         if ($this->_client === null) {
-            $this->_client = new \KonturElbaApi\Client();
+            $this->_client = new \KonturElbaApi\Client($this->_login, $this->_password);
         }
 
         return $this->_client;
