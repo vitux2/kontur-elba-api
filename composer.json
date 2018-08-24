@@ -1,0 +1,21 @@
+{
+    "name": "io-games-studio/kontur-elba-api",
+    "type": "library",
+    "version": "1.0",
+    "description": "",
+    "require": {
+        "guzzlehttp/guzzle": "^6.3",
+        "olamedia/nokogiri": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "capstring",
+            "email": "capstring@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
