@@ -22,7 +22,7 @@ class Response
         $result = [];
         $data = $this->_dom->get('html body table tbody tr')->toArray();
         foreach ($data as $item) {
-            if (preg_match('/^WageHistory_Items_ArrayControl_[\d]+$/', $item['id'])) {
+            if (isset($item['id']) && preg_match('/^WageHistory_Items_ArrayControl_[\d]+$/', $item['id'])) {
                 array_push($result, $item);
             }
         }
