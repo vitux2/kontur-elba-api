@@ -45,7 +45,6 @@ class Client
                 ],
                 'cookies' => $jar,
                 'verify' => false,
-                'proxy' => 'http://localhost:8888',
             ]);
         }
 
