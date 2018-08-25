@@ -47,7 +47,7 @@ class Core
     }
 
 
-    public function getEmployee($name) : Employee
+    public function getEmployee($name)
     {
         $employeesList = $this->getClient()->getEmployeesList();
         return $employeesList->getEmployee($name, $this->getClient());
