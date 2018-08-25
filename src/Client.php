@@ -78,7 +78,7 @@ class Client
     protected function getSessionId()
     {
         if ($this->_sessionId === null) {
-            $this->login();
+            $this->_sessionId = $this->login();
         }
 
         return $this->_sessionId;
