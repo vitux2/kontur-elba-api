@@ -34,6 +34,10 @@ class EmployeesList
     public function getEmployee($name, $client)
     {
         $item = $this->findByName($name);
+        if (!$item) {
+            return false;
+        }
+        
         return $item->getEmployee($client);
     }
 
