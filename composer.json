@@ -1,7 +1,7 @@
 {
     "name": "io-games-studio/kontur-elba-api",
     "type": "library",
-    "version": "1.0",
+    "version": "1.01",
     "description": "",
     "require": {
         "guzzlehttp/guzzle": "^6.3",

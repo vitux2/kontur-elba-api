@@ -98,13 +98,13 @@ class Client
     public function getEmployeesList()
     {
         $organizationId = $this->getOrganizationId();
-        $response = new Response($this->getInstance()->request('GET', "https://e-e.kontur.ru/Workers/Selection?organizationId={$organizationId}"));
+        $response = new Response($this->getInstance()->request('GET', "https://elba-staff.kontur.ru/Workers/Selection?organizationId={$organizationId}"));
         return new EmployeesList($response, true);
     }
 
     public function getEmployee($employeeId, $organizationId)
     {
-        $response = new Response($this->getInstance()->request('GET', "https://e-e.kontur.ru/Worker/Wage?workerId={$employeeId}&organizationId={$organizationId}"));
+        $response = new Response($this->getInstance()->request('GET', "https://elba-staff.kontur.ru/Worker/Wage?workerId={$employeeId}&organizationId={$organizationId}"));
         return new Employee($response);
     }
 
