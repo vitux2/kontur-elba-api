@@ -51,11 +51,9 @@ class Client
         return $this->_instance;
     }
 
-    protected function login()
+    public function login()
     {
         $response = $this->getInstance()->request('GET', 'AccessControl/Login');
-
-        sleep(1);
 
         $response = $this->getInstance()->request('POST', 'AccessControl/Login/GoInside', [
             'body' => json_encode([
@@ -70,12 +68,14 @@ class Client
             ]
         ]);
 
-        preg_match('/sessionId%3D([\d]+)/', $response->getHeader('redirectUri')[0], $out);
-        return $out[1];
+        preg_match('/scope%3D(\w+)/', $response->getHeader('redirectUri')[0], $out);
+        $scope = $out[1];        
+        return  $scope;
     }
 
-    protected function getSessionId()
+    public function getSessionId()
     {
+        $this->login();
         if ($this->_sessionId === null) {
             $this->_sessionId = $this->login();
         }
@@ -94,6 +94,30 @@ class Client
 
         return $this->_organizationId;
     }
+    
+    public function getOutgoingDocumentList($ContractorId = 'ac16fb8f-83a1-4c3a-83a2-039fbcd40b8f')
+    {
+        $this->getSessionId();
+        
+        $body = [
+            "Period" => null, 
+            "ContractorId" => $ContractorId, 
+            "Type" => 'undefined',
+            "OnlyAttentionRequired" => false
+        ];
+                
+        $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip=0&take=25&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
+            'body' => json_encode($body),
+            'headers' => [
+                'X-Requested-With' => 'XMLHttpRequest',
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+        
+        $json = $response->getBody()->__toString();
+        
+        return $this->normalizeJson($json); 
+    }
 
     public function getEmployeesList()
     {
@@ -108,6 +132,18 @@ class Client
         return new Employee($response);
     }
 
-
+    private function normalizeJson($json) {
+        preg_match_all('/new Date\(\d+,\d+,\d+,\d+,\d+,\d+,\d+\)/i', $json, $out);
+        if (isset($out[0]) && is_array($out[0])) {
+            foreach ($out[0] as $dt) {
+                preg_match('/new Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/i', $dt, $ti);
+                if (isset($ti)) {
+                    $n_ti = '"'.date('Y-m-d H:i:s', strtotime($ti[1].'-'.$ti[2].'-'.$ti[3].' '.$ti[4].':'.$ti[5].':'.$ti[6])).'"';
+                    $json = str_replace($dt, $n_ti, $json);                    
+                }
+            }          
+        }
+        return json_decode($json);
+    }
 
 }
