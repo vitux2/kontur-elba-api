@@ -95,7 +95,7 @@ class Client
         return $this->_organizationId;
     }
     
-    public function getOutgoingDocumentList($ContractorId, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null)
+    public function getOutgoingDocumentList($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 100)
     {
         $this->getSessionId();
         
@@ -106,7 +106,7 @@ class Client
             "OnlyAttentionRequired" => $OnlyAttentionRequired
         ];
                 
-        $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip=0&take=25&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
+        $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
             'body' => json_encode($body),
             'headers' => [
                 'X-Requested-With' => 'XMLHttpRequest',
