@@ -95,15 +95,15 @@ class Client
         return $this->_organizationId;
     }
     
-    public function getOutgoingDocumentList($ContractorId = 'ac16fb8f-83a1-4c3a-83a2-039fbcd40b8f')
+    public function getOutgoingDocumentList($ContractorId, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null)
     {
         $this->getSessionId();
         
         $body = [
-            "Period" => null, 
+            "Period" => $Period, 
             "ContractorId" => $ContractorId, 
-            "Type" => 'undefined',
-            "OnlyAttentionRequired" => false
+            "Type" => $Type,
+            "OnlyAttentionRequired" => $OnlyAttentionRequired
         ];
                 
         $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip=0&take=25&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
@@ -111,6 +111,35 @@ class Client
             'headers' => [
                 'X-Requested-With' => 'XMLHttpRequest',
                 'Content-Type' => 'application/json',
+            ],
+        ]);
+        
+        $json = $response->getBody()->__toString();
+        
+        return $this->normalizeJson($json); 
+    }
+    
+    public function printFile($documentid, $report = 'Bill', $requisitesprintmode = 'all', $mode = 'pdf', $downloadfilehandler = true)
+    {
+        $this->getSessionId();
+        
+        $response = new Response($this->getInstance()->request('GET', "Print/PrintFile/PrintFile?report={$report}&scope={$this->_sessionId}&documentid={$documentid}&requisitesprintmode={$requisitesprintmode}&mode={$mode}&downloadfilehandler={$downloadfilehandler}"));
+    }
+    
+    public function GetContractorsAutocomplete($q, $limit = 500)
+    {
+        $this->getSessionId();
+        
+        $body = [
+            "q" => $q, 
+            "limit" => $limit            
+        ];
+                
+        $response = $this->getInstance()->request('POST', "Business/Contractors/ContractorsAutocomplete/GetContractorsAutocomplete?withemptycontractor=true&withallcontractors=true&shortnameisinpriority=true&scope={$this->_sessionId}", [
+            'body' => http_build_query($body),
+            'headers' => [
+                'X-Requested-With' => 'XMLHttpRequest',
+                'Content-Type' => 'application/x-www-form-urlencoded',
             ],
         ]);
         
@@ -130,7 +159,7 @@ class Client
     {
         $response = new Response($this->getInstance()->request('GET', "https://elba-staff.kontur.ru/Worker/Wage?workerId={$employeeId}&organizationId={$organizationId}"));
         return new Employee($response);
-    }
+    }    
 
     private function normalizeJson($json) {
         preg_match_all('/new Date\(\d+,\d+,\d+,\d+,\d+,\d+,\d+\)/i', $json, $out);
