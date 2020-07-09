@@ -124,6 +124,7 @@ class Client
         $this->getSessionId();
         
         $response = new Response($this->getInstance()->request('GET', "Print/PrintFile/PrintFile?report={$report}&scope={$this->_sessionId}&documentid={$documentid}&requisitesprintmode={$requisitesprintmode}&mode={$mode}&downloadfilehandler={$downloadfilehandler}"));
+        return $response;
     }
     
     public function GetContractorsAutocomplete($q, $limit = 500)
