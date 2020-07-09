@@ -119,12 +119,17 @@ class Client
         return $this->normalizeJson($json); 
     }
     
-    public function printFile($documentid, $report = 'Bill', $requisitesprintmode = 'all', $mode = 'pdf', $downloadfilehandler = true)
+    public function printFile($documentid, $report = 'Bill', $requisitesprintmode = 'all', $mode = 'pdf', $downloadfilehandler = 'true')
     {
         $this->getSessionId();
+        $response = $this->getInstance()->request('GET', "Print/PrintFile/PrintFile?report={$report}&scope={$this->_sessionId}&documentid={$documentid}&requisitesprintmode={$requisitesprintmode}&mode={$mode}&downloadfilehandler={$downloadfilehandler}");
         
-        $response = new Response($this->getInstance()->request('GET', "Print/PrintFile/PrintFile?report={$report}&scope={$this->_sessionId}&documentid={$documentid}&requisitesprintmode={$requisitesprintmode}&mode={$mode}&downloadfilehandler={$downloadfilehandler}"));
-        return $response;
+        header ( "Content-Type: " . $response->getHeader('Content-Type')[0]);
+        header ( "Accept-Ranges: bytes");
+        header ( "Content-Disposition: " . $response->getHeader('Content-Disposition')[0]);
+        header ( "Content-Length: " . $response->getHeader('Content-Length')[0] );
+             
+       return  $response->getBody()->getContents();
     }
     
     public function GetContractorsAutocomplete($q, $limit = 500)
