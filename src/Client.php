@@ -173,7 +173,7 @@ class Client
             foreach ($out[0] as $dt) {
                 preg_match('/new Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/i', $dt, $ti);
                 if (isset($ti)) {
-                    $n_ti = '"'.date('Y-m-d H:i:s', strtotime($ti[1].'-'.$ti[2].'-'.$ti[3].' '.$ti[4].':'.$ti[5].':'.$ti[6])).'"';
+                    $n_ti = '"'.date('Y-m-d H:i:s', strtotime($ti[1].'-'.($ti[2]+1).'-'.$ti[3].' '.$ti[4].':'.$ti[5].':'.$ti[6])).'"';
                     $json = str_replace($dt, $n_ti, $json);                    
                 }
             }          
