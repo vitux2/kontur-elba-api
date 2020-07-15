@@ -97,26 +97,31 @@ class Client
     
     public function getOutgoingDocumentList($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 100)
     {
-        $this->getSessionId();
-        
-        $body = [
-            "Period" => $Period, 
-            "ContractorId" => $ContractorId, 
-            "Type" => $Type,
-            "OnlyAttentionRequired" => $OnlyAttentionRequired
-        ];
-                
-        $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
-            'body' => json_encode($body),
-            'headers' => [
-                'X-Requested-With' => 'XMLHttpRequest',
-                'Content-Type' => 'application/json',
-            ],
-        ]);
-        
-        $json = $response->getBody()->__toString();
-        
-        return $this->normalizeJson($json); 
+        try {
+            $this->getSessionId();
+
+            $body = [
+                "Period" => $Period, 
+                "ContractorId" => $ContractorId, 
+                "Type" => $Type,
+                "OnlyAttentionRequired" => $OnlyAttentionRequired
+            ];
+
+            $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
+                'body' => json_encode($body),
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+
+            $json = $response->getBody()->__toString();
+
+            return $this->normalizeJson($json);
+            
+        } catch (\Exception $e) {
+            return [];
+        }
     }
     
     public function printFile($documentid, $report = 'Bill', $requisitesprintmode = 'all', $mode = 'pdf', $downloadfilehandler = 'true')
