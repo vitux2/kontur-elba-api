@@ -97,6 +97,8 @@ class Client
     
     public function getOutgoingDocumentList($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 100)
     {
+        if(strlen($ContractorId) != 36) $ContractorId = '99999999-8175-489d-a0f4-f6ca0b1df132';
+        
         try {
             $this->getSessionId();
 
