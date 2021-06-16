@@ -95,12 +95,40 @@ class Client
         return $this->_organizationId;
     }
     
-    public function getOutgoingDocumentList($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 100)
+    public function getOutgoingDocumentList($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 50)
+    {
+        if(strlen($ContractorId) != 36) return [];
+             
+        try {
+            
+            $this->getSessionId();
+            
+            $body = [
+                "DocumentByDeals" => $this->getOwnerIds($ContractorId)
+            ];
+            
+            $response = $this->getInstance()->request('POST', "Business/Documents/Deals/Deals/GetOutgoingDealItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=Date%2Cdesc%3BUpdated%2Cdesc", [
+                'body' => json_encode($body),
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+
+            $json = $response->getBody()->__toString();
+
+            return $this->normalizeJson($json);
+            
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getOwnerIds($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 50)
     {
         if(strlen($ContractorId) != 36) return [];
         
         try {
-            $this->getSessionId();
 
             $body = [
                 "Period" => $Period, 
@@ -118,8 +146,18 @@ class Client
             ]);
 
             $json = $response->getBody()->__toString();
-
-            return $this->normalizeJson($json);
+            
+            $result_array = [];
+            
+            $owners_id = $this->normalizeJson($json);
+            
+            if (isset($owners_id->Items)) {
+                foreach ($owners_id->Items as $owner_id) {
+                    $result_array[] = ["DealId" => $owner_id->OwnerId];
+                }
+            }
+            
+            return $result_array;   
             
         } catch (\Exception $e) {
             return [];
