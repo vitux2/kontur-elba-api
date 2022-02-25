@@ -210,8 +210,32 @@ class Client
     {
         $response = new Response($this->getInstance()->request('GET', "https://elba-staff.kontur.ru/Worker/Wage?workerId={$employeeId}&organizationId={$organizationId}"));
         return new Employee($response);
-    }    
+    } 
+    
+    public function checkDocumentNumberUniqueness($number = 1, $documenttype = 0, $date = null)
+    {
+        $date = empty($date) ? date('d.m.Y') : $date;
+        $this->getSessionId();
+        $response = $this->getInstance()->request('GET', "Business/Documents/DocumentEditing/EditDocument/CheckDocumentNumberUniqueness?number={$number}&documenttype={$documenttype}&date={$date}");
+        
+        return  json_decode($response->getBody()->getContents());
+    }
 
+    public function createBill($data)
+    {
+        $response = $this->getInstance()->request('POST', "API/CreateBill.ashx", [
+            'body' => json_encode($data),
+            'headers' => [
+                'X-Login' => $this->_login,
+                'X-Password' => $this->_password,
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+        
+        $sesult = $response->getBody()->__toString();  
+        return $sesult;
+    }
+    
     private function normalizeJson($json) {
         preg_match_all('/new Date\(\d+,\d+,\d+,\d+,\d+,\d+,\d+\)/i', $json, $out);
         if (isset($out[0]) && is_array($out[0])) {
