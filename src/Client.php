@@ -172,7 +172,7 @@ class Client
         header ( "Content-Type: " . $response->getHeader('Content-Type')[0]);
         header ( "Accept-Ranges: bytes");
         header ( "Content-Disposition: " . $response->getHeader('Content-Disposition')[0]);
-        header ( "Content-Length: " . $response->getHeader('Content-Length')[0] );
+        //header ( "Content-Length: " . $response->getHeader('Content-Length')[0] );
              
        return  $response->getBody()->getContents();
     }
