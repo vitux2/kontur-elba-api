@@ -253,7 +253,15 @@ class Client
         ]);
 
         return $response->getBody()->getContents();
-    }  
+    }
+    
+    public function getContractorRequisites($inn)
+    {
+        $this->getSessionId();
+        $response = $this->getInstance()->request('GET', "Requisites/Focus/GetAsContractors?inn=$inn");
+        
+        return  json_decode($response->getBody()->getContents());
+    }
     
     private function normalizeJson($json) {
         preg_match_all('/new Date\(\d+,\d+,\d+,\d+,\d+,\d+,\d+\)/i', $json, $out);
