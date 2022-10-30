@@ -164,6 +164,73 @@ class Client
         }
     }
     
+    public function getOutgoingDocumentListNew($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 50)
+    {   
+        $this->getSessionId();
+        
+        try {
+
+            $body = [
+                "Period" => $Period, 
+                "ContractorId" => $ContractorId, 
+                "Type" => $Type,
+                "OnlyAttentionRequired" => $OnlyAttentionRequired
+            ];
+
+            $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
+                'body' => json_encode($body),
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+
+            $json = $response->getBody()->__toString();
+                        
+            return $this->normalizeJson($json);
+            
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getSendViaEmailViewData(string $ContractorId, array $DocumentIdsArray)
+    {               
+        try {
+            $this->getSessionId();
+            $DocumentIds = implode(',', $DocumentIdsArray);            
+            $response = $this->getInstance()->request('GET', "Business/Documents/SendViaEmail/SendViaEmail/GetViewData?contractorid={$ContractorId}&documentids={$DocumentIds}&scope={$this->_sessionId}");
+            
+            $json = $response->getBody()->__toString();                     
+            return $this->normalizeJson($json);
+            
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function sendViaEmail($body)
+    {   
+        $this->getSessionId();
+        
+        try {
+            $response = $this->getInstance()->request('POST', "Business/Documents/SendViaEmail/SendViaEmail/Send?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
+                'body' => json_encode($body),
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+
+            $json = $response->getBody()->__toString();
+                        
+            return $this->normalizeJson($json);
+            
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
     public function printFile($documentid, $report = 'Bill', $requisitesprintmode = 'all', $mode = 'pdf', $downloadfilehandler = 'true')
     {
         $this->getSessionId();
