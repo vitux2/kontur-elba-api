@@ -215,7 +215,7 @@ class Client
         $this->getSessionId();
         
         try {
-            $response = $this->getInstance()->request('POST', "Business/Documents/SendViaEmail/SendViaEmail/Send?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
+            $response = $this->getInstance()->request('POST', "Business/Documents/SendViaEmail/SendViaEmail/Send?scope={$this->_sessionId}", [
                 'body' => json_encode($body),
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
@@ -228,7 +228,7 @@ class Client
             return $this->normalizeJson($json);
             
         } catch (\Exception $e) {
-            return [];
+            return $e->getMessage();
         }
     }
     
