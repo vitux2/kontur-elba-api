@@ -1,7 +1,7 @@
 {
     "name": "vitux2/kontur-elba-api",
     "type": "library",
-    "version": "1.01",
+    "version": "1.02",
     "description": "",
     "require": {
         "guzzlehttp/guzzle": "^6.3",
