@@ -124,6 +124,35 @@ class Client
         }
     }
     
+    public function getOutgoingDocumentListByDeal($DealId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 50)
+    {
+        if(strlen($DealId) != 36) return [];
+             
+        try {
+            
+            $this->getSessionId();
+            
+            $body = [
+                "DocumentByDeals" => [["DealId" => $DealId]]
+            ];
+            
+            $response = $this->getInstance()->request('POST', "Business/Documents/Deals/Deals/GetOutgoingDealItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=Date%2Cdesc%3BUpdated%2Cdesc", [
+                'body' => json_encode($body),
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+
+            $json = $response->getBody()->__toString();
+
+            return $this->normalizeJson($json);
+            
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
     public function getOwnerIds($ContractorId = null, $Type = 'undefined', $OnlyAttentionRequired = false, $Period = null, $skip = 0, $limit = 50)
     {
         if(strlen($ContractorId) != 36) return [];
@@ -178,7 +207,7 @@ class Client
             ];
 
             //$response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&metaonly=false&sort=SumForSorting.IsFilled%2Cdesc%3BSumForSorting.SumForSorting%2Cdesc%3BDate%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=true", [
-                $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&page={$page}&metaonly=false&sort=Date%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
+            $response = $this->getInstance()->request('POST', "Business/Documents/Outgoing/List/OutgoingDocumentList/GetItems?scope={$this->_sessionId}&skip={$skip}&take={$limit}&page={$page}&metaonly=false&sort=Date%2Cdesc%3BCreated%2Cdesc&ignoresavedfilter=false", [
                 'body' => json_encode($body),
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
